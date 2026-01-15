@@ -47,4 +47,12 @@ shell-backend:
 
 # Run tests inside the running docker container
 test:
-	docker-compose exec backend python -m pytest tests/test_api.py -v
+	@echo "🧪 Running backend tests..."
+	# FIX 1: env PYTHONPATH=. ensures pytest can import 'main.py'
+	docker-compose exec backend env PYTHONPATH=. pytest --cov=app tests/ -v
+	
+	@echo "🧪 Running frontend tests..."
+	# FIX 2: -- --run forces Vitest to run once and exit (no watch mode)
+	docker-compose exec frontend npm test -- --run
+	
+	@echo "✅ Tests completed."
