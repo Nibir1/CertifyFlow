@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Response
 from app.models.schemas import TechSpec, FATProcedure
 from app.core.generator import generate_fat_from_spec
-from app.services.pdf_renderer import render_fat_pdf # Import the new service
+from app.services.pdf_renderer import render_fat_pdf
+from app.core.validator import ComplianceValidator  # <--- NEW: Import the Safety Guardrail
 
 router = APIRouter()
 
@@ -9,11 +10,19 @@ router = APIRouter()
 async def generate_procedure(spec: TechSpec):
     """
     Generate a standard FAT Procedure from a raw technical specification.
+    Includes a post-processing validation step to enforce safety rules.
     """
     try:
-        result = generate_fat_from_spec(spec.raw_text)
-        return result
+        # 1. Generate via AI (The "Creative" Step)
+        raw_result = generate_fat_from_spec(spec.raw_text)
+        
+        # 2. Validate via Rule Engine (The "Safety" Guardrail)
+        # This checks for missing High Voltage warnings that the AI might have missed
+        validated_result = ComplianceValidator.validate(raw_result)
+        
+        return validated_result
     except Exception as e:
+        # In a real enterprise app, we would log this to Splunk/Datadog
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate-pdf")
