@@ -12,9 +12,9 @@
 ![Tech](https://img.shields.io/badge/Stack-FastAPI%20%7C%20React%20%7C%20OpenAI-blue)
 
 ## The Diagnosis
-**The Problem:** Industrial engineers spend hundreds of hours manually translating Technical Specifications (Datasheets) into Factory Acceptance Test (FAT) procedures.
-**The Trap:** Generic "Chat with PDF" tools produce conversational text that is legally unusable and prone to hallucinating sensor values (e.g., inventing a -50°C threshold for a -40°C sensor).
-**The Solution:** **CertifyFlow**. A Structured Extraction Engine that uses Pydantic to force LLMs into rigid JSON schemas, backed by a deterministic Regex Validator to guarantee safety compliance.
+- **The Problem:** Industrial engineers spend hundreds of hours manually translating Technical Specifications (Datasheets) into Factory Acceptance Test (FAT) procedures.
+- **The Trap:** Generic "Chat with PDF" tools produce conversational text that is legally unusable and prone to hallucinating sensor values (e.g., inventing a -50°C threshold for a -40°C sensor).
+- **The Solution:** **CertifyFlow**. A Structured Extraction Engine that uses Pydantic to force LLMs into rigid JSON schemas, backed by a deterministic Regex Validator to guarantee safety compliance.
 
 ---
 
