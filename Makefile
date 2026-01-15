@@ -1,48 +1,35 @@
-# Variables
-PYTHON = python
-PIP = pip
-DOCKER_COMPOSE_FILE = docker-compose.yml
-
-.PHONY: help install-backend setup-frontend up down clean clean-docker test-backend test-frontend test-all clean
+.PHONY: help build up down logs clean shell-backend test
 
 help:
-	@echo "CertifyFlow | Makefile Commands"
-	@echo "-----------------------------------"
-	@echo "  make install-backend   - Install Python dependencies"
-	@echo "  make setup-frontend    - Install Node dependencies"
-	@echo "  make ingest            - Ingest data into the vector database"
-	@echo "  make test-backend      - Run Python unit tests with coverage"
-	@echo "  make test-frontend     - Run React component tests"
-	@echo "  make test-all          - Run ALL tests"
-	@echo "  make up                - Start Full Stack in Docker"
+	@echo "🚀 CertifyFlow Makefile Commands"
+	@echo "================================="
+	@echo "make build   : Rebuild all containers (clean build)"
+	@echo "make up      : Start the system"
+	@echo "make down    : Stop the system"
+	@echo "make logs    : View live logs"
+	@echo "make clean   : Remove containers, networks, and volumes"
 
-install-backend:
-	cd backend && $(PIP) install -r requirements.txt && $(PIP) install pytest pytest-asyncio pytest-cov httpx
+# Force rebuild to ensure dependencies are fresh
+build:
+	docker-compose build --no-cache
+	docker-compose up -d
+	@echo "✅ Application running at http://localhost:5173"
 
-setup-frontend:
-	cd frontend && npm install
-
-# Testing Commands
-test-backend:
-	cd backend && pytest --cov=src tests/ -v
-
-test-frontend:
-	cd frontend && npm run test
-
-test-all: test-backend test-frontend
-
-# Development (Docker)
 up:
-	docker-compose -f $(DOCKER_COMPOSE_FILE) up --build
-	@echo "BrandGuardian is running! Access the frontend at http://localhost:5173 and the backend API at http://localhost:8000/docs"
+	docker-compose up -d
+	@echo "✅ Application running at http://localhost:5173"
 
 down:
-	docker-compose -f $(DOCKER_COMPOSE_FILE) down
+	docker-compose down
 
-clean-docker:
-	docker system prune -f
+logs:
+	docker-compose logs -f
 
+# Nuclear option: wipes database data too
 clean:
+	@echo "🧼 Cleaning up Docker containers, networks, and volumes..."
+	docker-compose down -v
+	docker system prune -f
 	@echo "🧹 Cleaning Python bytecode, cache, and coverage files..."
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
@@ -53,3 +40,11 @@ clean:
 	find . -type f -name ".coverage" -delete
 	find . -type d -name "htmlcov" -exec rm -rf {} +
 	@echo "✅ Clean complete."
+
+# Debugging helper
+shell-backend:
+	docker-compose exec backend /bin/bash
+
+# Run tests inside the running docker container
+test:
+	docker-compose exec backend python -m pytest tests/test_api.py -v

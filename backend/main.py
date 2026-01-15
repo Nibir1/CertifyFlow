@@ -9,39 +9,32 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-# Initialize FastAPI app with project metadata
+# Import the new router
+from app.api.routes import router as gen_router
+
 app = FastAPI(
     title="CertifyFlow API",
     description="AI-Assisted FAT/SAT Procedure Generation Engine",
     version="0.1.0"
 )
 
-# CORS Configuration
-# We explicitly allow the frontend origin to prevent CORS errors during development
-origins = [
-    "http://localhost:5173",  # Vite Frontend default port
-    "http://127.0.0.1:5173",
-]
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# Register the Generation Router
+app.include_router(gen_router, prefix="/api/v1", tags=["Generation"])
 
 @app.get("/health", tags=["System"])
 async def health_check():
-    """
-    System Health Check
-    -------------------
-    Simple endpoint to verify backend is running and reachable.
-    Returns: JSON response with status 'ok'.
-    """
     return JSONResponse(content={"status": "ok", "service": "CertifyFlow Backend"})
 
 if __name__ == "__main__":
     import uvicorn
-    # Run the server directly for debugging purposes
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
