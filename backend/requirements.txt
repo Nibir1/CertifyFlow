@@ -8,11 +8,12 @@ instructor==0.5.2
 openai==1.12.0
 langchain==0.1.7
 
-# DEPENDENCY FIX: Pin httpx to prevent OpenAI 1.12.0 crash
+# DEPENDENCY FIX: Pin httpx to prevent OpenAI 1.12.0 conflict
 httpx==0.27.0
 
 # PDF Generation (Phase 3)
-WeasyPrint==60.2
+# UPDATE: Upgraded to 63.1 to fix 'pydyf' dependency crash
+WeasyPrint==63.1
 Jinja2==3.1.3
 
 # Utilities
