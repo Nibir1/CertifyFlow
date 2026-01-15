@@ -22,6 +22,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                             CertifyFlow
                         </div>
                         <div className="h-6 w-px bg-gray-300 mx-2"></div>
+                        <span className="text-gray-500 font-medium">FAT Procedure Generator</span>
+                    </div>
+                    <div className="text-sm text-gray-400">
+                        v1.0.0
                     </div>
                 </div>
             </header>
