@@ -1,0 +1,33 @@
+services:
+  # Python FastAPI Backend
+  backend:
+    build: ./backend
+    container_name: certifyflow-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/code
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # Will be used in Phase 2
+    networks:
+      - certifyflow-net
+
+  # React Frontend
+  frontend:
+    build: ./frontend
+    container_name: certifyflow-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Prevent host node_modules from overriding container
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - certifyflow-net
+
+networks:
+  certifyflow-net:
+    driver: bridge
